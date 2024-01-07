@@ -22,12 +22,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-0q8s+5x&(acv*3=0%5ocb__jc^bz=w9#y+ig1m@z&wrn8(k8ym'
+#SECRET_KEY = 'django-insecure-0q8s+5x&(acv*3=0%5ocb__jc^bz=w9#y+ig1m@z&wrn8(k8ym'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['elearning-backend.azurewebsites.net']
 
 
 # Application definition
@@ -44,14 +45,13 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     "corsheaders",
     'rest_auth',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
+   
     'rest_auth.registration',
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -107,12 +107,21 @@ WSGI_APPLICATION = 'elearning_backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+#print("os.environ.get('DB_pass'):",os.environ.get('DB_pass'))
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'elearningdatabase',
+        'USER': 'elearningdbadmin',
+        'PASSWORD': os.environ.get('DB_pass'),
+        'HOST': 'elearningdb.postgres.database.azure.com',
+        'PORT': '5432',
+        'OPTIONS':{
+            'sslmode':'require'
+        }
     }
 }
+
 
 
 # Password validation
@@ -149,8 +158,16 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+#STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+#STATIC_ROOT = os.path.join(BASE_DIR,'static')
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+
+DEFAULT_FILE_STORAGE = 'storages.backends.azure_storage.AzureStorage'
+MEDIA_URL = "https://elearningappstorage.blob.core.windows.net/media/"
+MEDIA_ROOT = None  # Media files are stored in Azure Blob Storage
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
@@ -161,4 +178,5 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY')
-STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY') 
+STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')
+print('STRIPE_SECRET_KEY:',STRIPE_SECRET_KEY) 

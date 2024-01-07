@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "undefined/subscriptions/db7029e7-67bc-40b4-a7e2-3c7251ba96ef/resourceGroups/appsvc_linux_centralus_premium/providers/Microsoft.Web/sites/elearning-backend",
+    "appService.deploySubpath": "."
+}
