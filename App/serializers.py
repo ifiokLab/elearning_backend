@@ -107,3 +107,10 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = '__all__'
+
+
+
+class CourseSerializerNew(serializers.ModelSerializer):
+    class Meta:
+        model = Course
+        fields = ['category','sub_category','title','thumbnail','overview','description','price']

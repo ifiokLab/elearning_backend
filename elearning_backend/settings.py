@@ -14,6 +14,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 load_dotenv()
 import os
+from azure.storage.blob import BlobServiceClient
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -28,7 +29,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['elearning-backend.azurewebsites.net']
+ALLOWED_HOSTS = ['elearning-backend.azurewebsites.net','127.0.0.1']
 
 
 # Application definition
@@ -49,8 +50,13 @@ INSTALLED_APPS = [
     'rest_auth.registration',
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_CREDENTIALS = True
+#CORS_ALLOW_ALL_ORIGINS = True
+#CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',  # React development server
+    'https://thankful-water-077d75a0f.4.azurestaticapps.net',  # Your Azure static web app domain
+    # Add other allowed origins as needed
+]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -166,16 +172,35 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 
 DEFAULT_FILE_STORAGE = 'storages.backends.azure_storage.AzureStorage'
+
+"""AZURE_BLOB_SERVICE_OPTIONS = {
+    'connection_timeout': 780,  # Set to None to disable the connection timeout
+    'socket_timeout': 780,  # Set to None to disable the socket timeout
+}"""
+AZURE_CONNECTION_STRING = os.environ.get('AZURE_CONNECTION_STRING')
+AZURE_ACCOUNT_NAME = "elearningappstorage"
+AZURE_CONTAINER = 'media'  # Replace with your container name
+#AZURE_CUSTOM_DOMAIN = "https://elearningappstorage.blob.core.windows.net/media/"
+AZURE_LOCATION = 'East US' 
+
+azure_service_client = BlobServiceClient.from_connection_string(os.environ.get('AZURE_CONNECTION_STRING'))
+
+#azure_service_client.socket_timeout = 1800
+azure_container_client = azure_service_client.get_container_client(os.environ.get('AZURE_CONTAINER'))
+
+print('azure_service_client.timeout:',azure_service_client)
+
+# Optional: Set a custom domain for serving media files
+
 MEDIA_URL = "https://elearningappstorage.blob.core.windows.net/media/"
 MEDIA_ROOT = None  # Media files are stored in Azure Blob Storage
-# Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'App.myuser'
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+#MEDIA_URL = '/media/'
+#MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY')
 STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')

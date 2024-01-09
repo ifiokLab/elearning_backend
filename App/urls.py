@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import (SignupView,CheckCourseOwnerView,FetchProfileView,SearchCoursesView,EditCourseView,FetchProfileView,EditProfileView,ProfileCreateView,InstructorLoginView,InstructorSignupView,GoToCartView,CheckEnrollmentView,EnrolledCoursesView,PaymentSuccessView,PaymentCancelView,CheckoutView,ShoppingCartList,AddToCartView,ShoppingCartView,ContentTypeCountView,ObjectivesDeleteAPIView,ObjectivesUpdateAPIView,RequirementsCreateView,ObjectivesCreateView, RequirementsUpdateAPIView,RequirementsDeleteAPIView, SectionListView,CourseDetailView,CourseListView,DeleteSectionView,UpdateContentView, DeleteContentView,ContentDetailView,UpdateSectionView,SectionContentsView,CourseSectionsView,SectionCreateView,LogoutView,LoginView,InstructorCoursesView,CourseCreateView,CategoryListAPIView,SubCategoryListAPIView)
+from .views import (SignupView,home,CheckCourseOwnerView,FetchProfileView,SearchCoursesView,EditCourseView,FetchProfileView,EditProfileView,ProfileCreateView,InstructorLoginView,InstructorSignupView,GoToCartView,CheckEnrollmentView,EnrolledCoursesView,PaymentSuccessView,PaymentCancelView,CheckoutView,ShoppingCartList,AddToCartView,ShoppingCartView,ContentTypeCountView,ObjectivesDeleteAPIView,ObjectivesUpdateAPIView,RequirementsCreateView,ObjectivesCreateView, RequirementsUpdateAPIView,RequirementsDeleteAPIView, SectionListView,CourseDetailView,CourseListView,DeleteSectionView,UpdateContentView, DeleteContentView,ContentDetailView,UpdateSectionView,SectionContentsView,CourseSectionsView,SectionCreateView,LogoutView,LoginView,InstructorCoursesView,CourseCreateView,CategoryListAPIView,SubCategoryListAPIView)
 
 
 urlpatterns = [
@@ -9,6 +9,7 @@ urlpatterns = [
     path('courses/<int:pk>/', CourseDetailView.as_view(), name='course-detail'),
     path('api/sections/<int:courseId>/', SectionListView.as_view(), name='section-list'),
     path('signup/', SignupView.as_view(), name='signup'),
+    path('', home.as_view(), name='home'),
     path('instructor-signup/', InstructorSignupView.as_view(), name='instructor-signup'),
     path('logout/', LogoutView.as_view(), name='logout'),
     path('login/', LoginView.as_view(), name='login'),

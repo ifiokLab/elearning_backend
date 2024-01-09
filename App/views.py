@@ -481,6 +481,7 @@ class CourseDetailView(APIView):
                 'discountPrice':calculateDiscount(discount.amount,course.price),
     
             }
+            print(' course_data:', course_data)
            
            
             return Response(course_data , status=status.HTTP_200_OK)
@@ -1182,3 +1183,13 @@ class CheckCourseOwnerView(APIView):
             return Response({'success':False}, status=status.HTTP_404_NOT_FOUND)
         
 
+
+
+
+class home(APIView):
+    #permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs): 
+        return Response({'success':True}, status=status.HTTP_200_OK)
+       
+        

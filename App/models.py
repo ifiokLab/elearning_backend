@@ -198,3 +198,12 @@ class Discount(models.Model):
         return f'{self.get_amount_display()} Discount'
     class Meta:
         ordering = ['-id']
+
+
+
+
+
+class Sample(models.Model):
+   
+    file = models.FileField(upload_to='sample/', null=True, blank=True)
+
