@@ -1,5 +1,36 @@
 from rest_framework import serializers
 from .models import *
+from cities_light.models import City,Country
+
+
+
+
+class CompanyProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CompanyProfile
+        fields = '__all__'
+        
+class JobSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Job
+        fields = '__all__'
+        #fields = ['title','description','location','preferred_employee_city','preferred_employee_country','company','posted_at','salary','job_type','company_industry','number_of_people_to_hire']
+
+class InterviewQuestionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = InterviewQuestion
+        fields = '__all__'
+
+
+class CountrySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Country
+        fields = ['id', 'name']
+
+class CitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = City
+        fields = ['id', 'name', 'country']
 
 class MyUserSerializer(serializers.ModelSerializer):
     class Meta:

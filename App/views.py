@@ -98,6 +98,36 @@ class InstructorSignupView(APIView):
         return Response({'success': False, 'message': 'Signup failed', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
+class CompanySignupView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        serializer = MyUserSerializer(data=request.data)
+       
+        
+        
+        if serializer.is_valid():
+            
+            user = serializer.save()
+            user.set_password(request.data.get('password'))
+            user.is_company = True
+            user.is_student = False
+            user.save()
+            login(request, user)
+            token, created = Token.objects.get_or_create(user=user)
+            user_data = {
+                'id': user.id,
+                'email': user.email,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'isLoggedIn':'true',
+                'auth_token': token.key, 
+            }
+            return Response({'success': True, 'message': 'Signup successful', 'user': user_data}, status=status.HTTP_201_CREATED)
+        return Response({'success': False, 'message': 'Signup failed', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
 class LogoutView(APIView):
 
     def post(self, request, *args, **kwargs):
@@ -1191,5 +1221,225 @@ class home(APIView):
 
     def get(self, request, *args, **kwargs): 
         return Response({'success':True}, status=status.HTTP_200_OK)
+
+
+
+class JobCreateView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [AllowAny]
+    def post(self, request, *args, **kwargs):
+        #print('request.data:',request.data)
+        
+        auth_header = request.headers.get('Authorization', '')
+        _, token = auth_header.split()
+        # Check if the token is valid
+        token_obj = Token.objects.get(key=token)
+        user = token_obj.user
+        data = request.data.copy()
+        company = CompanyProfile.objects.get(user = user)
+        data['company'] = company.id
+        print('company:',company.company_name)
+        print('user@',data)
+        
+        serializer = JobSerializer(data=data,partial = True)
+        if serializer.is_valid():
+            print('valid')
+            serializer.save()
+            return Response({'success':True,'data':serializer.data}, status=status.HTTP_201_CREATED)
+        print('serializer.errors:',serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class CountryListView(APIView):
+    def get(self, request, *args, **kwargs):
+        countries = Country.objects.all()
+        serializer = CountrySerializer(countries, many=True)
+        print('serializer:',serializer.data)
+        return Response(serializer.data)
+
+class CityListView(APIView):
+    def get(self, request, *args, **kwargs):
+        country_id = request.query_params.get('country', None)
+        if country_id:
+            cities = City.objects.filter(country_id=country_id)
+        else:
+            cities = City.objects.all()
+        serializer = CitySerializer(cities, many=True)
+        return Response(serializer.data)
+
+
+    
+class CompanyProfileCreateView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [AllowAny]
+    def get(self, request):
+        profiles = CompanyProfile.objects.all()
+        serializer = CompanyProfileSerializer(profiles, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        
+        auth_header = request.headers.get('Authorization', '')
+        
+        _, token = auth_header.split()
+        
+        # Check if the token is valid
+        token_obj = Token.objects.get(key=token)
+        user = token_obj.user
+        print('request.data:',request.data)
+        serializer = CompanyProfileSerializer(data=request.data,partial = True)
+        if serializer.is_valid():
+            serializer.save(user = user)
+           
+            #return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response({'success':True,'data':serializer.data}, status=status.HTTP_201_CREATED)
+        print('serializer.errors:',serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
        
         
+
+class OrganizationJobList(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        auth_header = request.headers.get('Authorization', '')
+        _, token = auth_header.split()
+        # Check if the token is valid
+        token_obj = Token.objects.get(key=token)
+        user = token_obj.user
+        company = CompanyProfile.objects.get(user = user)
+        jobs = Job.objects.filter(company=company)
+        
+        all_jobs = []
+        for job in jobs:
+            job_data = {
+                'id': job.id,
+                'title': job.title,
+                'description': job.description,
+                
+    
+            }
+            all_jobs.append(job_data)#
+       
+        return Response({'all_jobs':all_jobs}, status=status.HTTP_200_OK)
+
+
+
+class InterviewQuestionsCreateView(APIView):
+    def post(self, request, job_id, format=None):
+        # Assuming the course_id is passed as a parameter in the URL
+        data = request.data.copy()
+        print('request.data:',request.data)
+        data['job'] = job_id
+
+        serializer = InterviewQuestionSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+
+            #Fetch all requirements for the associated course after posting
+            #requirements = Requirements.objects.filter(course_id=course_id)
+            #requirements_serializer = RequirementsSerializer(requirements, many=True)
+
+            return Response({
+                'success': True,
+                'message': 'question created successfully',
+               
+            }, status=status.HTTP_201_CREATED)
+
+        return Response({'success': False, 'message': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+    
+    def get(self, request, job_id, format=None):
+        questions = InterviewQuestion.objects.filter(job__id=job_id)
+        serializer = InterviewQuestionSerializer(questions, many=True)
+        #print('serializer.data:',serializer.data)
+       
+        return Response(serializer.data)
+
+    
+
+
+    def delete(self, request, course_id, format=None):
+        try:
+            requirement = Requirements.objects.get(pk=requirement_id, course_id=course_id)
+        except Requirements.DoesNotExist:
+            return Response({'error': 'Requirement not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        requirement.delete()
+        return Response({'success': True}, status=status.HTTP_200_OK)
+
+
+class InterviewQuestionsEdit(APIView):
+
+    def put(self, request,question_id, format=None):
+        #print('request.data:',request.data)
+        question = request.data['question']
+       
+        Interview = InterviewQuestion.objects.get(id = question_id)
+        if question:
+            Interview.question = question
+            Interview.save()
+
+            return Response({'success': True,}, status=status.HTTP_200_OK)
+       
+        return Response({'success': False}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class InterviewQuestionsDelete(APIView):
+
+    def delete(self, request,question_id, format=None):
+        #print('request.data:',request.data)
+       
+        Interview = InterviewQuestion.objects.get(id = question_id)
+        if Interview:
+            Interview.delete()
+            return Response({'success': True,}, status=status.HTTP_200_OK)
+       
+        return Response({'success': False}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+class JobListView(APIView):
+    permission_classes = []
+
+    def get(self, request, *args, **kwargs):
+
+        jobs = Job.objects.all()
+        
+        all_jobs = []
+        for job in jobs:
+            job_data = {
+                'id': job.id,
+                'title': job.title,
+                'description': job.description,
+                'location':job.location,
+                'city':job.preferred_employee_city,
+                'country':job.preferred_employee_country.name,
+                'company':job.company.company_name,
+                'job_type':job.job_type,
+            }
+            all_jobs.append(job_data)#
+       
+        return Response({'all_jobs':all_jobs}, status=status.HTTP_200_OK)
+
+
+
+class JobDetailView(APIView):
+    permission_classes = []
+
+    def get(self, request,Id, *args, **kwargs):
+
+        job = Job.objects.get(id = Id)
+        job_data = {
+            'id': job.id,
+            'title': job.title,
+            'description': job.description,
+            'location':job.location,
+            'city':job.preferred_employee_city,
+            'country':job.preferred_employee_country.name,
+            'company':job.company.id,
+            'job_type':job.job_type,
+            'salary':job.salary
+        }
+        print('job_data:',job_data)
+       
+        return Response({'job_data':job_data}, status=status.HTTP_200_OK)
+

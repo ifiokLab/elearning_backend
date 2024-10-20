@@ -1,8 +1,20 @@
 from django.urls import path
-from .views import (SignupView,home,CheckCourseOwnerView,FetchProfileView,SearchCoursesView,EditCourseView,FetchProfileView,EditProfileView,ProfileCreateView,InstructorLoginView,InstructorSignupView,GoToCartView,CheckEnrollmentView,EnrolledCoursesView,PaymentSuccessView,PaymentCancelView,CheckoutView,ShoppingCartList,AddToCartView,ShoppingCartView,ContentTypeCountView,ObjectivesDeleteAPIView,ObjectivesUpdateAPIView,RequirementsCreateView,ObjectivesCreateView, RequirementsUpdateAPIView,RequirementsDeleteAPIView, SectionListView,CourseDetailView,CourseListView,DeleteSectionView,UpdateContentView, DeleteContentView,ContentDetailView,UpdateSectionView,SectionContentsView,CourseSectionsView,SectionCreateView,LogoutView,LoginView,InstructorCoursesView,CourseCreateView,CategoryListAPIView,SubCategoryListAPIView)
+from .views import *
 
 
 urlpatterns = [
+    path('jobs/create/', JobCreateView.as_view(), name='job-create'),
+    path('api/countries/', CountryListView.as_view(), name='country-list'),
+    path('job/list/',JobListView.as_view(), name='job-list'),
+    path('job/<int:Id>/detail/',JobDetailView.as_view(), name='job-detail'),
+    path('api/cities/', CityListView.as_view(), name='city-list'),
+    path('interview-questions/<int:question_id>/delete/',  InterviewQuestionsDelete.as_view(), name='delete-interview-questions'),
+    path('interview-questions/<int:question_id>/edit/',  InterviewQuestionsEdit.as_view(), name='edit-interview-questions'),
+    path('interview-questions/<int:job_id>/create/',  InterviewQuestionsCreateView.as_view(), name='interview-questions'),
+    path('organization/job-list/',  OrganizationJobList.as_view(), name='organization-job-list'),
+    path('organization/signup/',  CompanySignupView.as_view(), name='organization-signup'),
+    path('organization/profile/create/', CompanyProfileCreateView.as_view(), name='organization-profile-create/'),
+
     path('api/courses/', CourseListView.as_view(), name='course-list'),
     path('courses/<int:course_id>/add-requirements/', RequirementsCreateView.as_view(), name='add-requirements'),
     path('courses/<int:course_id>/add-objectives/', ObjectivesCreateView.as_view(), name='add-objectives'),

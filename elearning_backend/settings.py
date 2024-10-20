@@ -14,6 +14,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 load_dotenv()
 import os
+import dj_database_url
 from azure.storage.blob import BlobServiceClient
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -46,7 +47,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     "corsheaders",
     'rest_auth',
-   
+    'cities_light',
     'rest_auth.registration',
 ]
 
@@ -113,21 +114,10 @@ WSGI_APPLICATION = 'elearning_backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-#print("os.environ.get('DB_pass'):",os.environ.get('DB_pass'))
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'elearningdatabase',
-        'USER': 'elearningdbadmin',
-        'PASSWORD': os.environ.get('DB_pass'),
-        'HOST': 'elearningdb.postgres.database.azure.com',
-        'PORT': '5432',
-        'OPTIONS':{
-            'sslmode':'require'
-        }
-    }
-}
 
+DATABASES = {
+    'default': dj_database_url.parse(os.environ.get('DATABASE_URL')),
+}
 
 
 # Password validation
