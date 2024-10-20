@@ -3,6 +3,7 @@ from .views import *
 
 
 urlpatterns = [
+    path('api/company-profile/check/', CheckCompanyProfileView.as_view(), name='check_company_profile'),
     path('jobs/create/', JobCreateView.as_view(), name='job-create'),
     path('api/countries/', CountryListView.as_view(), name='country-list'),
     path('job/list/',JobListView.as_view(), name='job-list'),

@@ -1443,3 +1443,26 @@ class JobDetailView(APIView):
        
         return Response({'job_data':job_data}, status=status.HTTP_200_OK)
 
+
+
+class CheckCompanyProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        auth_header = request.headers.get('Authorization', '')
+        _, token = auth_header.split()
+        # Check if the token is valid
+        token_obj = Token.objects.get(key=token)
+        user = token_obj.user
+        try:
+            # Check if the company profile exists for the authenticated user
+            company_profile = CompanyProfile.objects.get(user= user)
+            return Response({
+                'exists': True,
+                'company_name': company_profile.company_name
+            }, status=status.HTTP_200_OK)
+        except CompanyProfile.DoesNotExist:
+            return Response({
+                'exists': False,
+                'message': 'Company profile does not exist.'
+            }, status=status.HTTP_404_NOT_FOUND)
