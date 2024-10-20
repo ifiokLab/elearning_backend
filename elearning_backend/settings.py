@@ -51,8 +51,8 @@ INSTALLED_APPS = [
     'rest_auth.registration',
 ]
 
-#CORS_ALLOW_ALL_ORIGINS = True
-#CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',  # React development server
     'https://elearning-jobsite.onrender.com', 
