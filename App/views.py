@@ -1447,9 +1447,10 @@ class JobDetailView(APIView):
 
 class CheckCompanyProfileView(APIView):
     permission_classes = []
-
+    authentication_classes = []
     def get(self, request):
         auth_header = request.headers.get('Authorization', '')
+        print('auth_header:',auth_header)
         _, token = auth_header.split()
         # Check if the token is valid
         token_obj = Token.objects.get(key=token)
