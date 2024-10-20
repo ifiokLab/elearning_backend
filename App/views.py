@@ -1359,7 +1359,7 @@ class InterviewQuestionsCreateView(APIView):
 
     def delete(self, request, course_id, format=None):
         try:
-            requirement = Requirements.objects.get(pk=requirement_id, course_id=course_id)
+            requirement = Requirements.objects.get(course_id=course_id)
         except Requirements.DoesNotExist:
             return Response({'error': 'Requirement not found'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -1446,7 +1446,7 @@ class JobDetailView(APIView):
 
 
 class CheckCompanyProfileView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = []
 
     def get(self, request):
         auth_header = request.headers.get('Authorization', '')
