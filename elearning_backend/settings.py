@@ -30,7 +30,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['elearning-backend.azurewebsites.net','127.0.0.1']
+ALLOWED_HOSTS = ['elearning-backend-2iu9.onrender.com']
 
 
 # Application definition
@@ -55,7 +55,7 @@ INSTALLED_APPS = [
 #CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',  # React development server
-    'https://thankful-water-077d75a0f.4.azurestaticapps.net',  # Your Azure static web app domain
+    'https://elearning-jobsite.onrender.com', 
     # Add other allowed origins as needed
 ]
 
