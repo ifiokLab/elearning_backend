@@ -1446,8 +1446,8 @@ class JobDetailView(APIView):
 
 
 class CheckCompanyProfileView(APIView):
-    permission_classes = []
-    authentication_classes = []
+    permission_classes = [AllowAny]
+    authentication_classes = [TokenAuthentication]
     def get(self, request):
         auth_header = request.headers.get('Authorization', '')
         print('auth_header:',auth_header)
