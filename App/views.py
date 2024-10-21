@@ -1286,7 +1286,7 @@ class CompanyProfileCreateView(APIView):
         token_obj = Token.objects.get(key=token)
         user = token_obj.user
         print('request.data:',request.data)
-        serializer = CompanyProfileSerializer(data=request.data,partial = True)
+        serializer = CompanyProfileSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(user = user)
            
