@@ -157,8 +157,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 #STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
-#STATIC_ROOT = os.path.join(BASE_DIR,'static')
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_ROOT = os.path.join(BASE_DIR,'static')
+#STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 
 DEFAULT_FILE_STORAGE = 'storages.backends.azure_storage.AzureStorage'
@@ -182,8 +182,12 @@ print('azure_service_client.timeout:',azure_service_client)
 
 # Optional: Set a custom domain for serving media files
 
-MEDIA_URL = "https://elearningappstorage.blob.core.windows.net/media/"
-MEDIA_ROOT = None  # Media files are stored in Azure Blob Storage
+#MEDIA_URL = "https://elearningappstorage.blob.core.windows.net/media/"
+#MEDIA_ROOT = None  # Media files are stored in Azure Blob Storage
+
+MEDIA_URL = '/media/'
+# Set MEDIA_ROOT to the path where media files will be stored.
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
