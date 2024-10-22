@@ -5,10 +5,18 @@ from cities_light.models import City,Country
 
 
 
+
 class CompanyProfileSerializer(serializers.ModelSerializer):
+    # Mark user as read-only since it's set manually in the view
+    user = serializers.ReadOnlyField(source='user.username')
+
     class Meta:
         model = CompanyProfile
-        fields = '__all__'
+        fields = '__all__'  # or list the specific fields you want to include
+    
+    def create(self, validated_data):
+        # If there are other fields that need custom handling, you can do that here
+        return CompanyProfile.objects.create(**validated_data)
         
 class JobSerializer(serializers.ModelSerializer):
     class Meta:
